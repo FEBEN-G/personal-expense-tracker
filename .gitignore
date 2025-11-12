@@ -296,3 +296,5 @@ temp/
 
 # Windows shortcuts
 *.lnk
+*.sqlite3
+__pycache__/
