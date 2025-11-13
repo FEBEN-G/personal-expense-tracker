@@ -68,19 +68,14 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'expense_tracker.wsgi.application'
 
-# Database configuration with fallback
+
+   # Database configuration with fallback
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-
-if 'DATABASE_URL' in os.environ:
-    # Ensure SSL for production database connections
-    DATABASES['default']['OPTIONS'] = {
-        'sslmode': 'require',
-    }
 
 # Use PostgreSQL in production if DATABASE_URL is available
 if 'DATABASE_URL' in os.environ:
@@ -90,6 +85,10 @@ if 'DATABASE_URL' in os.environ:
             conn_max_age=600,
             conn_health_checks=True,
         )
+        # Add SSL configuration AFTER setting the database
+        DATABASES['default']['OPTIONS'] = {
+            'sslmode': 'require',
+        }
     except ImportError:
         pass
 
