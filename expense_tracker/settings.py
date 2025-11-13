@@ -4,10 +4,10 @@ from decouple import config
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = config('SECRET_KEY', default='django-insecure-change-in-production!')
+SECRET_KEY = os.environ.get('SECRET_KEY', config('SECRET_KEY', default='django-insecure-change-in-production!'))
 DEBUG = config('DEBUG', default=True, cast=bool)
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0', '.railway.app', '.onrender.com']
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1,0.0.0.0,.railway.app,.onrender.com').split(',')
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -72,6 +72,12 @@ DATABASES = {
     }
 }
 
+if 'DATABASE_URL' in os.environ:
+    # Ensure SSL for production database connections
+    DATABASES['default']['OPTIONS'] = {
+        'sslmode': 'require',
+    }
+
 # Use PostgreSQL in production if DATABASE_URL is available
 if 'DATABASE_URL' in os.environ:
     try:
@@ -134,7 +140,7 @@ REST_FRAMEWORK = {
 }
 
 # CORS Configuration
-CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_ALL_ORIGINS = os.environ.get('CORS_ALLOW_ALL_ORIGINS', 'True') == 'True'
 CORS_ALLOW_CREDENTIALS = True
 
 # CSRF Trusted Origins
