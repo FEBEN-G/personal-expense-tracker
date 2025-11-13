@@ -1,18 +1,25 @@
 import os
 from pathlib import Path
-from decouple import config
+import dj_database_url
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = os.environ.get('SECRET_KEY', config('SECRET_KEY', default='django-insecure-change-in-production!'))
-DEBUG = config('DEBUG', default=True, cast=bool)
+# SECURITY KEY - Simplified for production
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-fallback-key-for-development-only')
 
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1,0.0.0.0,.railway.app,.onrender.com').split(',')
+# DEBUG - Force False in production
+DEBUG = os.environ.get('DEBUG', 'False').lower() == 'true'
 
-# Add this specific domain
-if 'personal-expense-tracker-production-c36e.up.railway.app' not in ALLOWED_HOSTS:
-    ALLOWED_HOSTS.append('personal-expense-tracker-production-c36e.up.railway.app')
-    
+# ALLOWED HOSTS - Fixed for Railway
+ALLOWED_HOSTS = [
+    'localhost',
+    '127.0.0.1', 
+    '0.0.0.0',
+    'personal-expense-tracker-production-c36e.up.railway.app',
+    '.railway.app',
+    '.onrender.com'
+]
+
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -33,6 +40,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # Force Whitenoise
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -41,20 +49,12 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-# Add Whitenoise middleware if available
-try:
-    import whitenoise
-    MIDDLEWARE.insert(1, 'whitenoise.middleware.WhiteNoiseMiddleware')
-    INSTALLED_APPS.append('whitenoise.runserver_nostatic')
-except ImportError:
-    pass
-
 ROOT_URLCONF = 'expense_tracker.urls'
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -68,8 +68,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'expense_tracker.wsgi.application'
 
-
-   # Database configuration with fallback
+# Database configuration
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -79,18 +78,11 @@ DATABASES = {
 
 # Use PostgreSQL in production if DATABASE_URL is available
 if 'DATABASE_URL' in os.environ:
-    try:
-        import dj_database_url
-        DATABASES['default'] = dj_database_url.config(
-            conn_max_age=600,
-            conn_health_checks=True,
-        )
-        # Add SSL configuration AFTER setting the database
-        DATABASES['default']['OPTIONS'] = {
-            'sslmode': 'require',
-        }
-    except ImportError:
-        pass
+    DATABASES['default'] = dj_database_url.config(
+        conn_max_age=600,
+        conn_health_checks=True,
+        ssl_require=True
+    )
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -112,17 +104,22 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
 
-# Static files
+# Static files - Fixed for Railway
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-STATICFILES_DIRS = [BASE_DIR / 'static']
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATICFILES_DIRS = [
+    BASE_DIR / 'static',
+]
 
-# Use Whitenoise for static files if available
-try:
-    import whitenoise
-    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-except ImportError:
-    pass
+# Create static directory if it doesn't exist
+if not os.path.exists(BASE_DIR / 'static'):
+    os.makedirs(BASE_DIR / 'static')
+    # Create a minimal CSS file to avoid warnings
+    with open(BASE_DIR / 'static' / 'style.css', 'w') as f:
+        f.write('/* Static files */')
+
+# Whitenoise configuration
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
@@ -137,13 +134,10 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 20,
-    'DEFAULT_FILTER_BACKENDS': [
-        'django_filters.rest_framework.DjangoFilterBackend',
-    ],
 }
 
 # CORS Configuration
-CORS_ALLOW_ALL_ORIGINS = os.environ.get('CORS_ALLOW_ALL_ORIGINS', 'True') == 'True'
+CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
 
 # CSRF Trusted Origins
@@ -153,7 +147,8 @@ CSRF_TRUSTED_ORIGINS = [
     'https://*.railway.app',
     'https://*.onrender.com',
 ]
-# Security settings - Fixed for Railway
+
+# Security settings for Railway
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 if not DEBUG:
@@ -163,4 +158,3 @@ if not DEBUG:
     SECURE_CONTENT_TYPE_NOSNIFF = True
 else:
     CSRF_COOKIE_SECURE = False
-    CSRF_COOKIE_HTTPONLY = False
