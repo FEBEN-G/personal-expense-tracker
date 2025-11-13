@@ -9,6 +9,10 @@ DEBUG = config('DEBUG', default=True, cast=bool)
 
 ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1,0.0.0.0,.railway.app,.onrender.com').split(',')
 
+# Add this specific domain
+if 'personal-expense-tracker-production-c36e.up.railway.app' not in ALLOWED_HOSTS:
+    ALLOWED_HOSTS.append('personal-expense-tracker-production-c36e.up.railway.app')
+    
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -150,10 +154,10 @@ CSRF_TRUSTED_ORIGINS = [
     'https://*.railway.app',
     'https://*.onrender.com',
 ]
+# Security settings - Fixed for Railway
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
-# Security settings for production
 if not DEBUG:
-    SECURE_SSL_REDIRECT = True
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
     SECURE_BROWSER_XSS_FILTER = True
