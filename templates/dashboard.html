@@ -3,19 +3,19 @@
 {% block title %}Dashboard - ExpenseTracker{% endblock %}
 
 {% block content %}
-<div class="min-h-screen bg-gray-50">
+<div class="min-h-screen bg-gray-50 flex flex-col">
     <!-- Header -->
     <div class="bg-white shadow">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center py-6">
+            <div class="flex flex-col sm:flex-row justify-between items-center py-4 gap-4">
                 <div class="flex items-center">
                     <i class="fas fa-wallet text-purple-600 text-2xl mr-3"></i>
-                    <h1 class="text-3xl font-bold text-gray-900">ExpenseTracker</h1>
+                    <h1 class="text-2xl sm:text-3xl font-bold text-gray-900">ExpenseTracker</h1>
                 </div>
                 <div class="flex items-center space-x-4">
-                    <span class="text-gray-700">Welcome, <span id="usernameDisplay" class="font-semibold">User</span>!</span>
-                    <button onclick="handleLogout()" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors">
-                        <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                    <span class="text-gray-700 text-sm sm:text-base">Welcome, <span id="usernameDisplay" class="font-semibold">User</span>!</span>
+                    <button onclick="handleLogout()" class="bg-red-600 hover:bg-red-700 text-white px-3 sm:px-4 py-2 rounded-lg transition-colors text-sm sm:text-base">
+                        <i class="fas fa-sign-out-alt mr-1 sm:mr-2"></i>Logout
                     </button>
                 </div>
             </div>
@@ -23,40 +23,40 @@
     </div>
 
     <!-- Main Content -->
-    <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-        <div class="px-4 py-6 sm:px-0">
+    <div class="flex-1 max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+        <div class="space-y-6">
             <!-- Stats Cards -->
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 <div class="bg-purple-50 p-4 rounded-lg">
-                    <h3 class="font-semibold text-purple-800">Total Expenses</h3>
-                    <p class="text-2xl font-bold text-purple-600" id="totalExpenses">$0.00</p>
+                    <h3 class="font-semibold text-purple-800 text-sm sm:text-base">Total Expenses</h3>
+                    <p class="text-xl sm:text-2xl font-bold text-purple-600" id="totalExpenses">$0.00</p>
                 </div>
                 <div class="bg-green-50 p-4 rounded-lg">
-                    <h3 class="font-semibold text-green-800">Transactions</h3>
-                    <p class="text-2xl font-bold text-green-600" id="totalTransactions">0</p>
+                    <h3 class="font-semibold text-green-800 text-sm sm:text-base">Transactions</h3>
+                    <p class="text-xl sm:text-2xl font-bold text-green-600" id="totalTransactions">0</p>
                 </div>
                 <div class="bg-blue-50 p-4 rounded-lg">
-                    <h3 class="font-semibold text-blue-800">Categories</h3>
-                    <p class="text-2xl font-bold text-blue-600" id="totalCategories">0</p>
+                    <h3 class="font-semibold text-blue-800 text-sm sm:text-base">Categories</h3>
+                    <p class="text-xl sm:text-2xl font-bold text-blue-600" id="totalCategories">0</p>
                 </div>
                 <div class="bg-orange-50 p-4 rounded-lg">
-                    <h3 class="font-semibold text-orange-800">Average Expense</h3>
-                    <p class="text-2xl font-bold text-orange-600" id="averageExpense">$0.00</p>
+                    <h3 class="font-semibold text-orange-800 text-sm sm:text-base">Average Expense</h3>
+                    <p class="text-xl sm:text-2xl font-bold text-orange-600" id="averageExpense">$0.00</p>
                 </div>
             </div>
 
             <!-- Recent Expenses Section -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <!-- Recent Expenses -->
                 <div class="bg-white rounded-lg shadow">
-                    <div class="px-6 py-4 border-b border-gray-200">
+                    <div class="px-4 sm:px-6 py-4 border-b border-gray-200">
                         <h2 class="text-lg font-semibold text-gray-800">Recent Expenses</h2>
                     </div>
-                    <div class="p-6">
+                    <div class="p-4 sm:p-6">
                         <div id="recentExpenses" class="space-y-3">
                             <div class="text-center text-gray-500 py-4">
-                                <i class="fas fa-receipt text-3xl text-gray-300 mb-2"></i>
-                                <p>No recent expenses</p>
+                                <i class="fas fa-receipt text-2xl sm:text-3xl text-gray-300 mb-2"></i>
+                                <p class="text-sm sm:text-base">No recent expenses</p>
                             </div>
                         </div>
                     </div>
@@ -64,14 +64,14 @@
 
                 <!-- Recent Categories -->
                 <div class="bg-white rounded-lg shadow">
-                    <div class="px-6 py-4 border-b border-gray-200">
+                    <div class="px-4 sm:px-6 py-4 border-b border-gray-200">
                         <h2 class="text-lg font-semibold text-gray-800">Your Categories</h2>
                     </div>
-                    <div class="p-6">
+                    <div class="p-4 sm:p-6">
                         <div id="recentCategories" class="space-y-3">
                             <div class="text-center text-gray-500 py-4">
-                                <i class="fas fa-tags text-3xl text-gray-300 mb-2"></i>
-                                <p>No categories yet</p>
+                                <i class="fas fa-tags text-2xl sm:text-3xl text-gray-300 mb-2"></i>
+                                <p class="text-sm sm:text-base">No categories yet</p>
                             </div>
                         </div>
                     </div>
@@ -80,18 +80,18 @@
 
             <!-- Quick Actions -->
             <div class="bg-white rounded-lg shadow">
-                <div class="px-6 py-4 border-b border-gray-200">
+                <div class="px-4 sm:px-6 py-4 border-b border-gray-200">
                     <h2 class="text-lg font-semibold text-gray-800">Quick Actions</h2>
                 </div>
-                <div class="p-6">
-                    <div class="flex flex-wrap gap-4">
-                        <a href="/expenses/" class="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-lg transition-colors flex items-center">
+                <div class="p-4 sm:p-6">
+                    <div class="flex flex-col sm:flex-row flex-wrap gap-3">
+                        <a href="/expenses/" class="bg-purple-600 hover:bg-purple-700 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-lg transition-colors flex items-center justify-center text-sm sm:text-base">
                             <i class="fas fa-plus mr-2"></i>Add Expense
                         </a>
-                        <a href="/categories/" class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg transition-colors flex items-center">
+                        <a href="/categories/" class="bg-green-600 hover:bg-green-700 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-lg transition-colors flex items-center justify-center text-sm sm:text-base">
                             <i class="fas fa-tags mr-2"></i>Manage Categories
                         </a>
-                        <a href="/analytics/" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg transition-colors flex items-center">
+                        <a href="/analytics/" class="bg-blue-600 hover:bg-blue-700 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-lg transition-colors flex items-center justify-center text-sm sm:text-base">
                             <i class="fas fa-chart-bar mr-2"></i>View Analytics
                         </a>
                     </div>
